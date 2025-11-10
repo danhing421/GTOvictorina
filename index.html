@@ -7,17 +7,19 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary-blue: #3498db;
-            --secondary-purple: #9b59b6;
-            --accent-green: #2ecc71;
-            --dark-blue: #2980b9;
-            --light-purple: #bb8fce;
-            --light-green: #58d68d;
-            --text-color: #333;
-            --light-text: #fff;
-            --incorrect-red: #e74c3c;
-            --correct-green: #2ecc71;
-            --background-gradient: linear-gradient(135deg, #3498db, #9b59b6, #2ecc71);
+            --primary-blue: #5D8BF4;
+            --secondary-purple: #9C51E0;
+            --accent-green: #2CD3A8;
+            --dark-blue: #3D5AF1;
+            --light-purple: #BB8FCE;
+            --light-green: #58D68D;
+            --text-color: #2C3E50;
+            --light-text: #FFFFFF;
+            --incorrect-red: #FF6B6B;
+            --correct-green: #2CD3A8;
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.25);
+            --glass-shadow: rgba(0, 0, 0, 0.1);
         }
 
         * {
@@ -28,23 +30,196 @@
         }
 
         body {
-            background: var(--background-gradient);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 20px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(92, 139, 244, 0.4) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(156, 81, 224, 0.4) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(44, 211, 168, 0.3) 0%, transparent 50%);
+            z-index: -1;
+            animation: gradientShift 15s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { 
+                background: 
+                    radial-gradient(circle at 20% 80%, rgba(92, 139, 244, 0.4) 0%, transparent 50%),
+                    radial-gradient(circle at 80% 20%, rgba(156, 81, 224, 0.4) 0%, transparent 50%),
+                    radial-gradient(circle at 40% 40%, rgba(44, 211, 168, 0.3) 0%, transparent 50%);
+            }
+            33% { 
+                background: 
+                    radial-gradient(circle at 80% 80%, rgba(92, 139, 244, 0.4) 0%, transparent 50%),
+                    radial-gradient(circle at 20% 20%, rgba(156, 81, 224, 0.4) 0%, transparent 50%),
+                    radial-gradient(circle at 60% 60%, rgba(44, 211, 168, 0.3) 0%, transparent 50%);
+            }
+            66% { 
+                background: 
+                    radial-gradient(circle at 40% 20%, rgba(92, 139, 244, 0.4) 0%, transparent 50%),
+                    radial-gradient(circle at 60% 80%, rgba(156, 81, 224, 0.4) 0%, transparent 50%),
+                    radial-gradient(circle at 20% 60%, rgba(44, 211, 168, 0.3) 0%, transparent 50%);
+            }
+        }
+
+        .liquid-bottom {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 150px;
+            background: linear-gradient(0deg, 
+                rgba(93, 139, 244, 0.4) 0%, 
+                rgba(156, 81, 224, 0.3) 30%,
+                rgba(255, 255, 255, 0.1) 70%,
+                transparent 100%);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            z-index: -1;
+            animation: liquidFlow 8s ease-in-out infinite;
+            transform-origin: bottom;
+        }
+
+        .liquid-bottom::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            left: 0;
+            width: 100%;
+            height: 40px;
+            background: linear-gradient(0deg, 
+                transparent 0%,
+                rgba(255, 255, 255, 0.2) 50%,
+                transparent 100%);
+            border-radius: 50%;
+            filter: blur(5px);
+            animation: liquidSurface 6s ease-in-out infinite;
+        }
+
+        @keyframes liquidFlow {
+            0%, 100% {
+                transform: scaleY(1) skewX(0deg);
+                height: 150px;
+            }
+            25% {
+                transform: scaleY(1.1) skewX(1deg);
+                height: 160px;
+            }
+            50% {
+                transform: scaleY(0.95) skewX(-1deg);
+                height: 140px;
+            }
+            75% {
+                transform: scaleY(1.05) skewX(0.5deg);
+                height: 155px;
+            }
+        }
+
+        @keyframes liquidSurface {
+            0%, 100% {
+                transform: translateY(0) scaleX(1);
+                opacity: 0.6;
+            }
+            50% {
+                transform: translateY(-5px) scaleX(1.02);
+                opacity: 0.8;
+            }
+        }
+
+        .liquid-drops {
+            position: fixed;
+            bottom: 150px;
+            width: 100%;
+            height: 50px;
+            z-index: -1;
+        }
+
+        .liquid-drop {
+            position: absolute;
+            bottom: 0;
+            width: 8px;
+            height: 15px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50% 50% 30% 30%;
+            animation: dropFall 4s linear infinite;
+            filter: blur(1px);
+        }
+
+        @keyframes dropFall {
+            0% {
+                transform: translateY(0) scaleY(1);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.7;
+            }
+            90% {
+                opacity: 0.7;
+            }
+            100% {
+                transform: translateY(50px) scaleY(0.5);
+                opacity: 0;
+            }
         }
 
         .container {
             width: 100%;
             max-width: 800px;
-            background-color: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2),
+                inset 0 -1px 0 rgba(0, 0, 0, 0.1);
             overflow: hidden;
             animation: fadeIn 0.8s ease-out;
             position: relative;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transform: translateZ(0);
+            will-change: transform;
+            margin-bottom: 80px;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 5%;
+            width: 90%;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            filter: blur(10px);
+            z-index: -1;
+            animation: containerShadow 4s ease-in-out infinite;
+        }
+
+        @keyframes containerShadow {
+            0%, 100% {
+                transform: scaleX(1) translateY(0);
+                opacity: 0.3;
+            }
+            50% {
+                transform: scaleX(1.1) translateY(-5px);
+                opacity: 0.5;
+            }
         }
 
         @keyframes fadeIn {
@@ -53,12 +228,50 @@
         }
 
         .header {
-            background: linear-gradient(to right, var(--primary-blue), var(--secondary-purple));
+            background: linear-gradient(135deg, rgba(93, 139, 244, 0.7), rgba(156, 81, 224, 0.7));
             color: var(--light-text);
             padding: 25px;
             text-align: center;
             position: relative;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(93, 139, 244, 0.3), rgba(156, 81, 224, 0.3));
+            z-index: -1;
+            border-radius: 24px 24px 0 0;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent,
+                rgba(255, 255, 255, 0.1),
+                transparent
+            );
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
         }
 
         .header h1 {
@@ -82,11 +295,15 @@
         .progress-container {
             width: 100%;
             height: 12px;
-            background-color: rgba(255, 255, 255, 0.3);
+            background-color: rgba(255, 255, 255, 0.2);
             margin-top: 20px;
             border-radius: 6px;
             overflow: hidden;
             animation: slideInFromTop 0.8s ease-out 0.4s both;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            position: relative;
+            z-index: 1;
         }
 
         .progress-bar {
@@ -95,6 +312,30 @@
             width: 0%;
             transition: width 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             border-radius: 6px;
+            box-shadow: 0 0 10px rgba(44, 211, 168, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.4),
+                transparent
+            );
+            animation: progressShine 2s infinite;
+        }
+
+        @keyframes progressShine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
         }
 
         .timer-container {
@@ -105,6 +346,7 @@
             flex-direction: column;
             align-items: center;
             animation: slideInFromRight 0.8s ease-out 0.6s both;
+            z-index: 2;
         }
 
         @keyframes slideInFromRight {
@@ -127,10 +369,14 @@
             min-width: 80px;
             text-align: center;
             transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
 
         .timer.warning {
-            background-color: rgba(231, 76, 60, 0.3);
+            background-color: rgba(255, 107, 107, 0.3);
             color: #fff;
             animation: pulse 1s infinite;
         }
@@ -157,19 +403,21 @@
         }
 
         .welcome-screen h2 {
-            color: var(--dark-blue);
+            color: var(--light-text);
             margin-bottom: 20px;
             font-size: 1.8rem;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
         }
 
         .welcome-screen p {
             margin-bottom: 25px;
             line-height: 1.6;
-            color: var(--text-color);
+            color: var(--light-text);
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
         }
 
         .btn {
-            background: linear-gradient(to right, var(--primary-blue), var(--secondary-purple));
+            background: linear-gradient(135deg, rgba(93, 139, 244, 0.8), rgba(156, 81, 224, 0.8));
             color: white;
             border: none;
             padding: 14px 35px;
@@ -177,44 +425,52 @@
             border-radius: 30px;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            box-shadow: 
+                0 4px 15px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2),
+                inset 0 -1px 0 rgba(0, 0, 0, 0.1);
             margin: 10px;
             position: relative;
             overflow: hidden;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transform: translateZ(0);
         }
 
-        .btn::after {
+        .btn::before {
             content: '';
             position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 5px;
-            height: 5px;
-            background: rgba(255, 255, 255, 0.5);
-            opacity: 0;
-            border-radius: 100%;
-            transform: scale(1, 1) translate(-50%);
-            transform-origin: 50% 50%;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
         }
 
         .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+            transform: translateY(-3px) translateZ(0);
+            box-shadow: 
+                0 6px 20px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2),
+                inset 0 -1px 0 rgba(0, 0, 0, 0.1);
         }
 
-        .btn:active::after {
-            animation: ripple 1s ease-out;
+        .btn:active {
+            transform: translateY(1px) translateZ(0);
         }
 
-        @keyframes ripple {
-            0% {
-                transform: scale(0, 0);
-                opacity: 0.5;
-            }
-            100% {
-                transform: scale(20, 20);
-                opacity: 0;
-            }
+        .btn:disabled {
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.5);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
         }
 
         .question-screen {
@@ -223,10 +479,11 @@
 
         .question-text {
             font-size: 1.5rem;
-            color: var(--dark-blue);
+            color: var(--light-text);
             margin-bottom: 25px;
             line-height: 1.4;
             animation: fadeIn 0.5s ease-out;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
         }
 
         .options-container {
@@ -238,9 +495,9 @@
         }
 
         .option {
-            background-color: white;
-            border: 2px solid var(--light-purple);
-            border-radius: 10px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
             padding: 15px;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -248,6 +505,13 @@
             font-size: 1.1rem;
             position: relative;
             overflow: hidden;
+            color: var(--light-text);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 
+                0 2px 10px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            transform: translateZ(0);
         }
 
         .option::before {
@@ -257,7 +521,7 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
             transition: left 0.5s;
         }
 
@@ -266,22 +530,20 @@
         }
 
         .option:hover {
-            background-color: var(--light-purple);
-            color: white;
-            transform: translateX(5px);
+            background-color: rgba(255, 255, 255, 0.15);
+            transform: translateX(5px) translateZ(0);
+            border-color: rgba(255, 255, 255, 0.3);
         }
 
         .option.selected {
-            background-color: var(--secondary-purple);
-            color: white;
-            border-color: var(--secondary-purple);
-            transform: translateX(5px);
+            background-color: rgba(156, 81, 224, 0.3);
+            border-color: rgba(156, 81, 224, 0.5);
+            transform: translateX(5px) translateZ(0);
         }
 
         .option.correct {
-            background-color: var(--correct-green);
-            color: white;
-            border-color: var(--correct-green);
+            background-color: rgba(44, 211, 168, 0.3);
+            border-color: rgba(44, 211, 168, 0.5);
             animation: correctPulse 0.5s ease-out;
         }
 
@@ -292,9 +554,8 @@
         }
 
         .option.incorrect {
-            background-color: var(--incorrect-red);
-            color: white;
-            border-color: var(--incorrect-red);
+            background-color: rgba(255, 107, 107, 0.3);
+            border-color: rgba(255, 107, 107, 0.5);
             animation: shake 0.5s ease-out;
         }
 
@@ -315,17 +576,18 @@
         }
 
         .result-title {
-            color: var(--dark-blue);
+            color: var(--light-text);
             margin-bottom: 20px;
             font-size: 2rem;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
         }
 
         .score {
             font-size: 5rem;
             font-weight: bold;
-            color: var(--secondary-purple);
+            color: var(--light-text);
             margin: 20px 0;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
             animation: pulse 1.5s infinite, scoreAppear 0.8s ease-out;
         }
 
@@ -337,7 +599,8 @@
         .result-message {
             font-size: 1.5rem;
             margin-bottom: 30px;
-            color: var(--text-color);
+            color: var(--light-text);
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
         }
 
         .confetti {
@@ -347,6 +610,7 @@
             background-color: var(--accent-green);
             border-radius: 50%;
             animation: confetti-fall 5s linear forwards;
+            z-index: 100;
         }
 
         @keyframes confetti-fall {
@@ -364,6 +628,11 @@
             font-weight: bold;
             font-size: 1.1rem;
             animation: slideInFromLeft 0.8s ease-out 0.6s both;
+            color: var(--light-text);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 2;
         }
 
         @keyframes slideInFromLeft {
@@ -374,28 +643,36 @@
         .explanation {
             margin-top: 20px;
             padding: 15px;
-            background-color: rgba(187, 143, 206, 0.2);
+            background-color: rgba(255, 255, 255, 0.1);
             border-radius: 10px;
             text-align: left;
             animation: fadeIn 0.5s ease-out;
             display: none;
+            color: var(--light-text);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .explanation h3 {
-            color: var(--secondary-purple);
+            color: var(--light-text);
             margin-bottom: 10px;
         }
 
         .review-screen {
             display: none;
             text-align: left;
+            color: var(--light-text);
         }
 
         .review-question {
             margin-bottom: 30px;
             padding: 20px;
-            border-radius: 10px;
-            background-color: rgba(187, 143, 206, 0.1);
+            border-radius: 12px;
+            background-color: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .review-options {
@@ -406,16 +683,22 @@
             padding: 10px;
             margin: 5px 0;
             border-radius: 5px;
+            background-color: rgba(255, 255, 255, 0.1);
         }
 
         .user-answer {
-            background-color: rgba(231, 76, 60, 0.2);
+            background-color: rgba(255, 107, 107, 0.3);
             border-left: 4px solid var(--incorrect-red);
         }
 
         .correct-answer {
-            background-color: rgba(46, 204, 113, 0.2);
+            background-color: rgba(44, 211, 168, 0.3);
             border-left: 4px solid var(--correct-green);
+        }
+
+        .no-answer {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-left: 4px solid rgba(255, 255, 255, 0.5);
         }
 
         @media (max-width: 600px) {
@@ -446,11 +729,99 @@
                 margin-bottom: 15px;
                 display: inline-block;
             }
+            
+            .container {
+                border-radius: 16px;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+
+            .liquid-bottom {
+                height: 100px;
+            }
+        }
+
+        .bubble {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            animation: float 15s infinite ease-in-out;
+            z-index: -1;
+            transform: translateZ(0);
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) translateX(0); }
+            25% { transform: translateY(-20px) translateX(10px); }
+            50% { transform: translateY(-10px) translateX(20px); }
+            75% { transform: translateY(-30px) translateX(-10px); }
+        }
+
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 107, 107, 0.9);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            display: none;
+            animation: slideUp 0.3s ease-out;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+
+        .liquid-glass {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2),
+                inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+        }
+
+        .glass-reflection {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                135deg,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0.1) 50%,
+                rgba(255, 255, 255, 0) 100%
+            );
+            transform: translateX(-100%);
+            animation: reflection 3s infinite;
+            pointer-events: none;
+        }
+
+        @keyframes reflection {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="liquid-bottom"></div>
+    <div class="liquid-drops" id="liquid-drops"></div>
+    
+    <div class="container liquid-glass">
+        <div class="glass-reflection"></div>
         <div class="header">
             <h1>Викторина по ГТО</h1>
             <p>Проверьте свои знания о программе "Готов к труду и обороне"</p>
@@ -461,14 +832,14 @@
                 <div class="timer-label">Осталось времени:</div>
                 <div class="timer" id="timer">01:00</div>
             </div>
-            <div class="question-counter" id="question-counter">Вопрос 1/25</div>
+            <div class="question-counter" id="question-counter">Вопрос 1/30</div>
         </div>
         
         <div class="content">
             <!-- Экран приветствия -->
             <div class="welcome-screen" id="welcome-screen">
                 <h2>Добро пожаловать в викторину по ГТО!</h2>
-                <p>В этой викторине вас ждет 25 вопросов о нормах ГТО, истории программы и интересных фактах.</p>
+                <p>В этой викторине вас ждет 30 вопросов о нормах ГТО, истории программы и интересных фактах.</p>
                 <p>На каждый вопрос дается 1 минута. Постарайтесь ответить правильно на как можно больше вопросов!</p>
                 <button class="btn" id="start-btn">Начать викторину</button>
             </div>
@@ -485,14 +856,14 @@
                 </div>
                 <div class="navigation">
                     <button class="btn" id="prev-btn">Назад</button>
-                    <button class="btn" id="next-btn">Далее</button>
+                    <button class="btn" id="next-btn" disabled>Далее</button>
                 </div>
             </div>
             
             <!-- Экран с результатами -->
             <div class="result-screen" id="result-screen">
                 <h2 class="result-title">Ваш результат</h2>
-                <div class="score" id="score">0/25</div>
+                <div class="score" id="score">0/30</div>
                 <div class="result-message" id="result-message">Учи ГТО!</div>
                 <button class="btn" id="restart-btn">Пройти еще раз</button>
                 <button class="btn" id="review-btn">Посмотреть ответы</button>
@@ -511,8 +882,10 @@
         </div>
     </div>
 
+    <div class="notification" id="notification">Пожалуйста, выберите ответ!</div>
+
     <script>
-        // Вопросы для викторины
+        // Вопросы для викторины (30 вопросов)
         const questions = [
             {
                 question: "Сколько отжиманий надо для золотой медали ГТО у мужчин 18-24 лет?",
@@ -663,6 +1036,36 @@
                 options: ["10,5 сек", "11,0 сек", "11,5 сек", "12,0 сек"],
                 correct: 1,
                 explanation: "Для золотого знака ГТО у девочек 11-12 лет норматив по бегу на 60 метров составляет 11,0 секунд."
+            },
+            {
+                question: "Сколько видов спортивных дисциплин можно выбрать в комплексе ГТО?",
+                options: ["3", "5", "7", "9"],
+                correct: 2,
+                explanation: "В комплексе ГТО можно выбрать 7 видов спортивных дисциплин по выбору."
+            },
+            {
+                question: "Какой норматив по бегу на 1 км для мальчиков 9-10 лет на золотой знак?",
+                options: ["4.30 мин", "5.00 мин", "5.30 мин", "6.00 мин"],
+                correct: 0,
+                explanation: "Для золотого знака ГТО у мальчиков 9-10 лет норматив по бегу на 1 км составляет 4 минуты 30 секунд."
+            },
+            {
+                question: "С какого возраста можно сдавать нормы ГТО?",
+                options: ["6 лет", "8 лет", "10 лет", "12 лет"],
+                correct: 0,
+                explanation: "Сдавать нормы ГТО можно с 6 лет (1 ступень)."
+            },
+            {
+                question: "Какой норматив по плаванию на 25 метров для детей 6-8 лет на золотой знак?",
+                options: ["30 сек", "40 сек", "50 сек", "1 мин"],
+                correct: 2,
+                explanation: "Для золотого знака ГТО у детей 6-8 лет норматив по плаванию на 25 метров составляет 50 секунд."
+            },
+            {
+                question: "Сколько баллов нужно набрать для получения серебряного знака ГТО?",
+                options: ["200-249", "150-199", "100-149", "250-300"],
+                correct: 0,
+                explanation: "Для получения серебряного знака ГТО необходимо набрать от 200 до 249 баллов."
             }
         ];
 
@@ -687,6 +1090,8 @@
         const explanation = document.getElementById('explanation');
         const explanationText = document.getElementById('explanation-text');
         const reviewQuestionsContainer = document.getElementById('review-questions-container');
+        const notification = document.getElementById('notification');
+        const liquidDrops = document.getElementById('liquid-drops');
 
         // Переменные состояния
         let currentQuestion = 0;
@@ -695,6 +1100,43 @@
         let timer;
         let timeLeft = 60;
         let quizFinished = false;
+        let shuffledQuestions = [];
+
+        // Создание плавающих пузырей для фона
+        function createBubbles() {
+            const bubblesCount = 15;
+            for (let i = 0; i < bubblesCount; i++) {
+                const bubble = document.createElement('div');
+                bubble.classList.add('bubble');
+                
+                const size = Math.random() * 100 + 50;
+                bubble.style.width = `${size}px`;
+                bubble.style.height = `${size}px`;
+                
+                bubble.style.left = `${Math.random() * 100}%`;
+                bubble.style.top = `${Math.random() * 100}%`;
+                
+                bubble.style.animationDuration = `${Math.random() * 20 + 10}s`;
+                bubble.style.animationDelay = `${Math.random() * 5}s`;
+                
+                document.body.appendChild(bubble);
+            }
+        }
+
+        // Создание капель для эффекта жидкого стекла
+        function createLiquidDrops() {
+            const dropsCount = 20;
+            for (let i = 0; i < dropsCount; i++) {
+                const drop = document.createElement('div');
+                drop.classList.add('liquid-drop');
+                
+                drop.style.left = `${Math.random() * 100}%`;
+                drop.style.animationDelay = `${Math.random() * 4}s`;
+                drop.style.animationDuration = `${3 + Math.random() * 2}s`;
+                
+                liquidDrops.appendChild(drop);
+            }
+        }
 
         // Запуск викторины
         startBtn.addEventListener('click', startQuiz);
@@ -708,18 +1150,33 @@
         // Навигация
         prevBtn.addEventListener('click', () => changeQuestion(currentQuestion - 1));
         nextBtn.addEventListener('click', () => {
-            if (currentQuestion === questions.length - 1) {
+            if (userAnswers[currentQuestion] === null) {
+                showNotification();
+                return;
+            }
+            
+            if (currentQuestion === shuffledQuestions.length - 1) {
                 finishQuiz();
             } else {
                 changeQuestion(currentQuestion + 1);
             }
         });
 
+        function showNotification() {
+            notification.style.display = 'block';
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+
         function startQuiz() {
             currentQuestion = 0;
             userAnswers = new Array(questions.length).fill(null);
             score = 0;
             quizFinished = false;
+            
+            // Перемешиваем вопросы
+            shuffledQuestions = [...questions].sort(() => Math.random() - 0.5);
             
             welcomeScreen.style.display = 'none';
             resultScreen.style.display = 'none';
@@ -732,13 +1189,13 @@
 
         function showQuestion() {
             // Обновление прогресса
-            progressBar.style.width = `${(currentQuestion / questions.length) * 100}%`;
+            progressBar.style.width = `${(currentQuestion / shuffledQuestions.length) * 100}%`;
             
             // Обновление счетчика вопросов
-            questionCounter.textContent = `Вопрос ${currentQuestion + 1}/${questions.length}`;
+            questionCounter.textContent = `Вопрос ${currentQuestion + 1}/${shuffledQuestions.length}`;
             
             // Показать вопрос
-            const question = questions[currentQuestion];
+            const question = shuffledQuestions[currentQuestion];
             questionText.textContent = question.question;
             
             // Очистить варианты ответов
@@ -778,7 +1235,8 @@
             
             // Обновить состояние кнопок навигации
             prevBtn.disabled = currentQuestion === 0;
-            nextBtn.textContent = currentQuestion === questions.length - 1 ? 'Завершить' : 'Далее';
+            nextBtn.disabled = userAnswers[currentQuestion] === null;
+            nextBtn.textContent = currentQuestion === shuffledQuestions.length - 1 ? 'Завершить' : 'Далее';
             
             // Показать объяснение, если викторина завершена
             if (quizFinished) {
@@ -791,6 +1249,7 @@
             if (quizFinished) return;
             
             userAnswers[currentQuestion] = optionIndex;
+            nextBtn.disabled = false;
             
             // Обновить отображение выбранного варианта
             const options = document.querySelectorAll('.option');
@@ -805,7 +1264,7 @@
 
         function changeQuestion(newIndex) {
             // Сохранить ответ на текущий вопрос
-            if (newIndex >= 0 && newIndex < questions.length) {
+            if (newIndex >= 0 && newIndex < shuffledQuestions.length) {
                 currentQuestion = newIndex;
                 showQuestion();
                 resetTimer();
@@ -823,7 +1282,7 @@
                 if (timeLeft <= 0) {
                     clearInterval(timer);
                     // Автоматически перейти к следующему вопросу
-                    if (currentQuestion < questions.length - 1) {
+                    if (currentQuestion < shuffledQuestions.length - 1) {
                         changeQuestion(currentQuestion + 1);
                     } else {
                         finishQuiz();
@@ -858,8 +1317,8 @@
             
             // Подсчет результатов
             score = 0;
-            for (let i = 0; i < questions.length; i++) {
-                if (userAnswers[i] === questions[i].correct) {
+            for (let i = 0; i < shuffledQuestions.length; i++) {
+                if (userAnswers[i] === shuffledQuestions[i].correct) {
                     score++;
                 }
             }
@@ -869,15 +1328,15 @@
             resultScreen.style.display = 'block';
             
             // Обновить результаты
-            scoreElement.textContent = `${score}/${questions.length}`;
+            scoreElement.textContent = `${score}/${shuffledQuestions.length}`;
             
             // Показать сообщение в зависимости от результата
             if (score <= 10) {
-                resultMessage.textContent = "Учи ГТО!";
+                resultMessage.textContent = "Учи ГТО! Есть куда расти!";
             } else if (score <= 20) {
-                resultMessage.textContent = "Неплохо, но можно лучше!";
+                resultMessage.textContent = "Ты молодец! Хороший результат!";
             } else {
-                resultMessage.textContent = "Отлично! Вы знаток ГТО!";
+                resultMessage.textContent = "Потрясающе! Ты настоящий эксперт по ГТО!";
                 createConfetti();
             }
             
@@ -891,7 +1350,7 @@
             
             reviewQuestionsContainer.innerHTML = '';
             
-            questions.forEach((question, index) => {
+            shuffledQuestions.forEach((question, index) => {
                 const questionElement = document.createElement('div');
                 questionElement.classList.add('review-question');
                 
@@ -916,6 +1375,9 @@
                     } else if (optionIndex === question.correct) {
                         optionElement.classList.add('correct-answer');
                         optionElement.innerHTML += ' <i class="fas fa-check"></i> (Правильный ответ)';
+                    } else if (userAnswers[index] === null) {
+                        optionElement.classList.add('no-answer');
+                        optionElement.innerHTML += ' <i class="fas fa-question"></i> (Вы не ответили)';
                     }
                     
                     optionsContainer.appendChild(optionElement);
@@ -932,7 +1394,7 @@
         }
 
         function createConfetti() {
-            const colors = ['#3498db', '#9b59b6', '#2ecc71', '#e74c3c', '#f1c40f'];
+            const colors = ['#5D8BF4', '#9C51E0', '#2CD3A8', '#FF6B6B', '#FFD166'];
             for (let i = 0; i < 100; i++) {
                 const confetti = document.createElement('div');
                 confetti.classList.add('confetti');
@@ -947,6 +1409,12 @@
                 }, 5000);
             }
         }
+
+        // Инициализация при загрузке страницы
+        window.onload = function() {
+            createBubbles();
+            createLiquidDrops();
+        };
     </script>
 </body>
-  </html>
+</html>
