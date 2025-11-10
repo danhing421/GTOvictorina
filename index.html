@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Викторина по ГТО</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-blue: #3498db;
+            --secondary-purple: #9b59b6;
+            --accent-green: #2ecc71;
+            --dark-blue: #2980b9;
+            --light-purple: #bb8fce;
+            --light-green: #58d68d;
+            --text-color: #333;
+            --light-text: #fff;
+            --incorrect-red: #e74c3c;
+            --correct-green: #2ecc71;
+            --background-gradient: linear-gradient(135deg, #3498db, #9b59b6, #2ecc71);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: var(--background-gradient);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            animation: fadeIn 0.8s ease-out;
+            position: relative;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header {
+            background: linear-gradient(to right, var(--primary-blue), var(--secondary-purple));
+            color: var(--light-text);
+            padding: 25px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            animation: slideInFromTop 0.8s ease-out;
+        }
+
+        @keyframes slideInFromTop {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            animation: slideInFromTop 0.8s ease-out 0.2s both;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 12px;
+            background-color: rgba(255, 255, 255, 0.3);
+            margin-top: 20px;
+            border-radius: 6px;
+            overflow: hidden;
+            animation: slideInFromTop 0.8s ease-out 0.4s both;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(to right, var(--accent-green), var(--light-green));
+            width: 0%;
+            transition: width 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            border-radius: 6px;
+        }
+
+        .timer-container {
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: slideInFromRight 0.8s ease-out 0.6s both;
+        }
+
+        @keyframes slideInFromRight {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .timer-label {
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+            opacity: 0.8;
+        }
+
+        .timer {
+            background-color: rgba(0, 0, 0, 0.2);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 1.3rem;
+            min-width: 80px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .timer.warning {
+            background-color: rgba(231, 76, 60, 0.3);
+            color: #fff;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .content {
+            padding: 30px;
+            animation: fadeIn 0.8s ease-out 0.4s both;
+        }
+
+        .welcome-screen, .question-screen, .result-screen {
+            text-align: center;
+            animation: slideInFromBottom 0.8s ease-out;
+        }
+
+        @keyframes slideInFromBottom {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .welcome-screen h2 {
+            color: var(--dark-blue);
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+        }
+
+        .welcome-screen p {
+            margin-bottom: 25px;
+            line-height: 1.6;
+            color: var(--text-color);
+        }
+
+        .btn {
+            background: linear-gradient(to right, var(--primary-blue), var(--secondary-purple));
+            color: white;
+            border: none;
+            padding: 14px 35px;
+            font-size: 1.1rem;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            margin: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.5);
+            opacity: 0;
+            border-radius: 100%;
+            transform: scale(1, 1) translate(-50%);
+            transform-origin: 50% 50%;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn:active::after {
+            animation: ripple 1s ease-out;
+        }
+
+        @keyframes ripple {
+            0% {
+                transform: scale(0, 0);
+                opacity: 0.5;
+            }
+            100% {
+                transform: scale(20, 20);
+                opacity: 0;
+            }
+        }
+
+        .question-screen {
+            display: none;
+        }
+
+        .question-text {
+            font-size: 1.5rem;
+            color: var(--dark-blue);
+            margin-bottom: 25px;
+            line-height: 1.4;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 30px;
+            animation: fadeIn 0.5s ease-out 0.2s both;
+        }
+
+        .option {
+            background-color: white;
+            border: 2px solid var(--light-purple);
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            font-size: 1.1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.5s;
+        }
+
+        .option:hover::before {
+            left: 100%;
+        }
+
+        .option:hover {
+            background-color: var(--light-purple);
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .option.selected {
+            background-color: var(--secondary-purple);
+            color: white;
+            border-color: var(--secondary-purple);
+            transform: translateX(5px);
+        }
+
+        .option.correct {
+            background-color: var(--correct-green);
+            color: white;
+            border-color: var(--correct-green);
+            animation: correctPulse 0.5s ease-out;
+        }
+
+        @keyframes correctPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+            100% { transform: scale(1); }
+        }
+
+        .option.incorrect {
+            background-color: var(--incorrect-red);
+            color: white;
+            border-color: var(--incorrect-red);
+            animation: shake 0.5s ease-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-5px); }
+            40%, 80% { transform: translateX(5px); }
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            animation: fadeIn 0.5s ease-out 0.4s both;
+        }
+
+        .result-screen {
+            display: none;
+        }
+
+        .result-title {
+            color: var(--dark-blue);
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+
+        .score {
+            font-size: 5rem;
+            font-weight: bold;
+            color: var(--secondary-purple);
+            margin: 20px 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            animation: pulse 1.5s infinite, scoreAppear 0.8s ease-out;
+        }
+
+        @keyframes scoreAppear {
+            from { opacity: 0; transform: scale(0.5); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .result-message {
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+            color: var(--text-color);
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: var(--accent-green);
+            border-radius: 50%;
+            animation: confetti-fall 5s linear forwards;
+        }
+
+        @keyframes confetti-fall {
+            0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        }
+
+        .question-counter {
+            position: absolute;
+            top: 25px;
+            left: 25px;
+            background-color: rgba(0, 0, 0, 0.2);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            animation: slideInFromLeft 0.8s ease-out 0.6s both;
+        }
+
+        @keyframes slideInFromLeft {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .explanation {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: rgba(187, 143, 206, 0.2);
+            border-radius: 10px;
+            text-align: left;
+            animation: fadeIn 0.5s ease-out;
+            display: none;
+        }
+
+        .explanation h3 {
+            color: var(--secondary-purple);
+            margin-bottom: 10px;
+        }
+
+        .review-screen {
+            display: none;
+            text-align: left;
+        }
+
+        .review-question {
+            margin-bottom: 30px;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: rgba(187, 143, 206, 0.1);
+        }
+
+        .review-options {
+            margin-top: 15px;
+        }
+
+        .review-option {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+        }
+
+        .user-answer {
+            background-color: rgba(231, 76, 60, 0.2);
+            border-left: 4px solid var(--incorrect-red);
+        }
+
+        .correct-answer {
+            background-color: rgba(46, 204, 113, 0.2);
+            border-left: 4px solid var(--correct-green);
+        }
+
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .question-text {
+                font-size: 1.3rem;
+            }
+            
+            .btn {
+                padding: 12px 25px;
+                font-size: 1rem;
+            }
+            
+            .score {
+                font-size: 4rem;
+            }
+            
+            .timer-container {
+                position: static;
+                margin-top: 15px;
+            }
+            
+            .question-counter {
+                position: static;
+                margin-bottom: 15px;
+                display: inline-block;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Викторина по ГТО</h1>
+            <p>Проверьте свои знания о программе "Готов к труду и обороне"</p>
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+            <div class="timer-container">
+                <div class="timer-label">Осталось времени:</div>
+                <div class="timer" id="timer">01:00</div>
+            </div>
+            <div class="question-counter" id="question-counter">Вопрос 1/25</div>
+        </div>
+        
+        <div class="content">
+            <!-- Экран приветствия -->
+            <div class="welcome-screen" id="welcome-screen">
+                <h2>Добро пожаловать в викторину по ГТО!</h2>
+                <p>В этой викторине вас ждет 25 вопросов о нормах ГТО, истории программы и интересных фактах.</p>
+                <p>На каждый вопрос дается 1 минута. Постарайтесь ответить правильно на как можно больше вопросов!</p>
+                <button class="btn" id="start-btn">Начать викторину</button>
+            </div>
+            
+            <!-- Экран с вопросами -->
+            <div class="question-screen" id="question-screen">
+                <div class="question-text" id="question-text">Вопрос появится здесь</div>
+                <div class="options-container" id="options-container">
+                    <!-- Варианты ответов будут добавляться динамически -->
+                </div>
+                <div class="explanation" id="explanation">
+                    <h3>Объяснение:</h3>
+                    <p id="explanation-text"></p>
+                </div>
+                <div class="navigation">
+                    <button class="btn" id="prev-btn">Назад</button>
+                    <button class="btn" id="next-btn">Далее</button>
+                </div>
+            </div>
+            
+            <!-- Экран с результатами -->
+            <div class="result-screen" id="result-screen">
+                <h2 class="result-title">Ваш результат</h2>
+                <div class="score" id="score">0/25</div>
+                <div class="result-message" id="result-message">Учи ГТО!</div>
+                <button class="btn" id="restart-btn">Пройти еще раз</button>
+                <button class="btn" id="review-btn">Посмотреть ответы</button>
+            </div>
+
+            <!-- Экран просмотра ответов -->
+            <div class="review-screen" id="review-screen">
+                <h2 class="result-title">Просмотр ответов</h2>
+                <div id="review-questions-container">
+                    <!-- Вопросы с ответами будут добавляться динамически -->
+                </div>
+                <div style="text-align: center; margin-top: 30px;">
+                    <button class="btn" id="back-to-results-btn">Назад к результатам</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Вопросы для викторины
+        const questions = [
+            {
+                question: "Сколько отжиманий надо для золотой медали ГТО у мужчин 18-24 лет?",
+                options: ["32", "40", "28", "36"],
+                correct: 1,
+                explanation: "Для золотой медали ГТО у мужчин 18-24 лет необходимо выполнить 40 отжиманий."
+            },
+            {
+                question: "Какой норматив по бегу на 100 метров для золотого знака у женщин 25-29 лет?",
+                options: ["15,3 сек", "16,5 сек", "17,5 сек", "18,0 сек"],
+                correct: 0,
+                explanation: "Для золотого знака ГТО у женщин 25-29 лет норматив по бегу на 100 метров составляет 15,3 секунды."
+            },
+            {
+                question: "Сколько ступеней в комплексе ГТО?",
+                options: ["8", "10", "11", "12"],
+                correct: 2,
+                explanation: "В комплексе ГТО 11 ступеней, которые охватывают возрастные группы от 6 до 70 лет и старше."
+            },
+            {
+                question: "В каком году была возрождена программа ГТО в России?",
+                options: ["2010", "2012", "2014", "2016"],
+                correct: 2,
+                explanation: "Программа ГТО была возрождена в России в 2014 году указом Президента РФ."
+            },
+            {
+                question: "Какое упражнение не входит в комплекс ГТО?",
+                options: ["Прыжок в длину с места", "Подтягивание", "Метание гранаты", "Плавание"],
+                correct: 2,
+                explanation: "Метание гранаты не входит в комплекс ГТО, вместо него выполняется метание спортивного снаряда."
+            },
+            {
+                question: "Сколько видов испытаний включает комплекс ГТО для возрастной группы 18-29 лет?",
+                options: ["6", "8", "10", "12"],
+                correct: 1,
+                explanation: "Комплекс ГТО для возрастной группы 18-29 лет включает 8 видов испытаний (тестов)."
+            },
+            {
+                question: "Какая награда вручается за успешное выполнение нормативов ГТО?",
+                options: ["Медаль", "Значок", "Диплом", "Грамота"],
+                correct: 1,
+                explanation: "За успешное выполнение нормативов ГТО вручается знак отличия - золотой, серебряный или бронзовый значок."
+            },
+            {
+                question: "Сколько минут дается на выполнение норматива по плаванию на 50 метров?",
+                options: ["0,5 мин", "1 мин", "1,5 мин", "2 мин"],
+                correct: 1,
+                explanation: "На выполнение норматива по плаванию на 50 метров дается 1 минута для большинства возрастных групп."
+            },
+            {
+                question: "Какой норматив по подтягиванию для золотого знака у мужчин 30-39 лет?",
+                options: ["9 раз", "11 раз", "13 раз", "15 раз"],
+                correct: 2,
+                explanation: "Для золотого знака ГТО у мужчин 30-39 лет необходимо выполнить 13 подтягиваний."
+            },
+            {
+                question: "Сколько километров составляет норматив по лыжным гонкам для мужчин 18-24 лет?",
+                options: ["3 км", "5 км", "7 км", "10 км"],
+                correct: 1,
+                explanation: "Норматив по лыжным гонкам для мужчин 18-24 лет составляет 5 км."
+            },
+            {
+                question: "Какое минимальное количество баллов нужно набрать для получения золотого знака?",
+                options: ["200", "250", "300", "350"],
+                correct: 1,
+                explanation: "Для получения золотого знака ГТО необходимо набрать не менее 250 баллов."
+            },
+            {
+                question: "Сколько раз нужно поднять туловище из положения лежа за 1 минуту для золотого знака у женщин 18-24 лет?",
+                options: ["40", "45", "50", "55"],
+                correct: 2,
+                explanation: "Для золотого знака ГТО у женщин 18-24 лет необходимо поднять туловище из положения лежа 50 раз за 1 минуту."
+            },
+            {
+                question: "Какой норматив по стрельбе из пневматической винтовки?",
+                options: ["15 очков", "20 очков", "25 очков", "30 очков"],
+                correct: 2,
+                explanation: "Норматив по стрельбе из пневматической винтовки составляет 25 очков для золотого знака."
+            },
+            {
+                question: "Сколько метров составляет норматив по метанию спортивного снаряда для женщин?",
+                options: ["12 м", "14 м", "16 м", "18 м"],
+                correct: 1,
+                explanation: "Норматив по метанию спортивного снаряда для женщин составляет 14 метров для золотого знака."
+            },
+            {
+                question: "Какой норматив по бегу на 3 км для мужчин 30-39 лет на золотой знак?",
+                options: ["13.30 мин", "14.30 мин", "15.00 мин", "15.30 мин"],
+                correct: 0,
+                explanation: "Для золотого знака ГТО у мужчин 30-39 лет норматив по бегу на 3 км составляет 13 минут 30 секунд."
+            },
+            {
+                question: "Сколько испытаний по выбору включает комплекс ГТО?",
+                options: ["3", "5", "7", "9"],
+                correct: 2,
+                explanation: "Комплекс ГТО включает 7 испытаний по выбору, которые можно выбрать в соответствии с индивидуальными предпочтениями."
+            },
+            {
+                question: "Какой норматив по прыжку в длину с места для женщин 25-29 лет на золотой знак?",
+                options: ["190 см", "200 см", "210 см", "220 см"],
+                correct: 0,
+                explanation: "Для золотого знака ГТО у женщин 25-29 лет норматив по прыжку в длину с места составляет 190 см."
+            },
+            {
+                question: "Сколько раз нужно отжаться для золотого знака у женщин 18-24 лет?",
+                options: ["10", "12", "14", "16"],
+                correct: 2,
+                explanation: "Для золотого знака ГТО у женщин 18-24 лет необходимо выполнить 14 отжиманий."
+            },
+            {
+                question: "Какой норматив по наклону вперед для мужчин 18-24 лет на золотой знак?",
+                options: ["+6 см", "+8 см", "+10 см", "+12 см"],
+                correct: 2,
+                explanation: "Для золотого знака ГТО у мужчин 18-24 лет норматив по наклону вперед составляет +10 см."
+            },
+            {
+                question: "Сколько метров составляет норматив по плаванию для возрастной группы 18-29 лет?",
+                options: ["25 м", "50 м", "75 м", "100 м"],
+                correct: 1,
+                explanation: "Норматив по плаванию для возрастной группы 18-29 лет составляет 50 метров."
+            },
+            {
+                question: "Какой норматив по бегу на 2 км для женщин 30-39 лет на золотой знак?",
+                options: ["10.30 мин", "11.30 мин", "12.00 мин", "12.30 мин"],
+                correct: 1,
+                explanation: "Для золотого знака ГТО у женщин 30-39 лет норматив по бегу на 2 км составляет 11 минут 30 секунд."
+            },
+            {
+                question: "Сколько видов испытаний обязательно для выполнения?",
+                options: ["4", "6", "8", "10"],
+                correct: 1,
+                explanation: "Для получения знака отличия ГТО необходимо выполнить 6 обязательных испытаний."
+            },
+            {
+                question: "Какой норматив по подниманию туловища за 1 минуту для мужчин 40-49 лет на золотой знак?",
+                options: ["30", "35", "40", "45"],
+                correct: 2,
+                explanation: "Для золотого знака ГТО у мужчин 40-49 лет норматив по подниманию туловища за 1 минуту составляет 40 раз."
+            },
+            {
+                question: "Сколько раз нужно подтянуться для золотого знака у юношей 16-17 лет?",
+                options: ["10", "12", "14", "16"],
+                correct: 2,
+                explanation: "Для золотого знака ГТО у юношей 16-17 лет необходимо выполнить 14 подтягиваний."
+            },
+            {
+                question: "Какой норматив по бегу на 60 метров для девочек 11-12 лет на золотой знак?",
+                options: ["10,5 сек", "11,0 сек", "11,5 сек", "12,0 сек"],
+                correct: 1,
+                explanation: "Для золотого знака ГТО у девочек 11-12 лет норматив по бегу на 60 метров составляет 11,0 секунд."
+            }
+        ];
+
+        // Элементы DOM
+        const welcomeScreen = document.getElementById('welcome-screen');
+        const questionScreen = document.getElementById('question-screen');
+        const resultScreen = document.getElementById('result-screen');
+        const reviewScreen = document.getElementById('review-screen');
+        const startBtn = document.getElementById('start-btn');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const restartBtn = document.getElementById('restart-btn');
+        const reviewBtn = document.getElementById('review-btn');
+        const backToResultsBtn = document.getElementById('back-to-results-btn');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const progressBar = document.getElementById('progress-bar');
+        const timerElement = document.getElementById('timer');
+        const scoreElement = document.getElementById('score');
+        const resultMessage = document.getElementById('result-message');
+        const questionCounter = document.getElementById('question-counter');
+        const explanation = document.getElementById('explanation');
+        const explanationText = document.getElementById('explanation-text');
+        const reviewQuestionsContainer = document.getElementById('review-questions-container');
+
+        // Переменные состояния
+        let currentQuestion = 0;
+        let userAnswers = new Array(questions.length).fill(null);
+        let score = 0;
+        let timer;
+        let timeLeft = 60;
+        let quizFinished = false;
+
+        // Запуск викторины
+        startBtn.addEventListener('click', startQuiz);
+        restartBtn.addEventListener('click', startQuiz);
+        reviewBtn.addEventListener('click', showReview);
+        backToResultsBtn.addEventListener('click', () => {
+            reviewScreen.style.display = 'none';
+            resultScreen.style.display = 'block';
+        });
+
+        // Навигация
+        prevBtn.addEventListener('click', () => changeQuestion(currentQuestion - 1));
+        nextBtn.addEventListener('click', () => {
+            if (currentQuestion === questions.length - 1) {
+                finishQuiz();
+            } else {
+                changeQuestion(currentQuestion + 1);
+            }
+        });
+
+        function startQuiz() {
+            currentQuestion = 0;
+            userAnswers = new Array(questions.length).fill(null);
+            score = 0;
+            quizFinished = false;
+            
+            welcomeScreen.style.display = 'none';
+            resultScreen.style.display = 'none';
+            reviewScreen.style.display = 'none';
+            questionScreen.style.display = 'block';
+            
+            showQuestion();
+            startTimer();
+        }
+
+        function showQuestion() {
+            // Обновление прогресса
+            progressBar.style.width = `${(currentQuestion / questions.length) * 100}%`;
+            
+            // Обновление счетчика вопросов
+            questionCounter.textContent = `Вопрос ${currentQuestion + 1}/${questions.length}`;
+            
+            // Показать вопрос
+            const question = questions[currentQuestion];
+            questionText.textContent = question.question;
+            
+            // Очистить варианты ответов
+            optionsContainer.innerHTML = '';
+            
+            // Скрыть объяснение
+            explanation.style.display = 'none';
+            
+            // Добавить варианты ответов
+            question.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.classList.add('option');
+                optionElement.textContent = option;
+                
+                // Проверить, был ли уже выбран этот ответ
+                if (userAnswers[currentQuestion] === index) {
+                    optionElement.classList.add('selected');
+                    
+                    // Если викторина завершена, показать правильные/неправильные ответы
+                    if (quizFinished) {
+                        if (index === question.correct) {
+                            optionElement.classList.add('correct');
+                        } else {
+                            optionElement.classList.add('incorrect');
+                        }
+                    }
+                } else if (quizFinished && index === question.correct) {
+                    // Показать правильный ответ после завершения викторины
+                    optionElement.classList.add('correct');
+                }
+                
+                if (!quizFinished) {
+                    optionElement.addEventListener('click', () => selectOption(index));
+                }
+                optionsContainer.appendChild(optionElement);
+            });
+            
+            // Обновить состояние кнопок навигации
+            prevBtn.disabled = currentQuestion === 0;
+            nextBtn.textContent = currentQuestion === questions.length - 1 ? 'Завершить' : 'Далее';
+            
+            // Показать объяснение, если викторина завершена
+            if (quizFinished) {
+                explanationText.textContent = question.explanation;
+                explanation.style.display = 'block';
+            }
+        }
+
+        function selectOption(optionIndex) {
+            if (quizFinished) return;
+            
+            userAnswers[currentQuestion] = optionIndex;
+            
+            // Обновить отображение выбранного варианта
+            const options = document.querySelectorAll('.option');
+            options.forEach((option, index) => {
+                if (index === optionIndex) {
+                    option.classList.add('selected');
+                } else {
+                    option.classList.remove('selected');
+                }
+            });
+        }
+
+        function changeQuestion(newIndex) {
+            // Сохранить ответ на текущий вопрос
+            if (newIndex >= 0 && newIndex < questions.length) {
+                currentQuestion = newIndex;
+                showQuestion();
+                resetTimer();
+            }
+        }
+
+        function startTimer() {
+            clearInterval(timer);
+            timeLeft = 60;
+            updateTimerDisplay();
+            timer = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay();
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    // Автоматически перейти к следующему вопросу
+                    if (currentQuestion < questions.length - 1) {
+                        changeQuestion(currentQuestion + 1);
+                    } else {
+                        finishQuiz();
+                    }
+                }
+            }, 1000);
+        }
+
+        function resetTimer() {
+            clearInterval(timer);
+            timeLeft = 60;
+            updateTimerDisplay();
+            startTimer();
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            // Изменение цвета таймера при малом времени
+            if (timeLeft <= 10) {
+                timerElement.classList.add('warning');
+            } else {
+                timerElement.classList.remove('warning');
+            }
+        }
+
+        function finishQuiz() {
+            clearInterval(timer);
+            quizFinished = true;
+            
+            // Подсчет результатов
+            score = 0;
+            for (let i = 0; i < questions.length; i++) {
+                if (userAnswers[i] === questions[i].correct) {
+                    score++;
+                }
+            }
+            
+            // Показать экран результатов
+            questionScreen.style.display = 'none';
+            resultScreen.style.display = 'block';
+            
+            // Обновить результаты
+            scoreElement.textContent = `${score}/${questions.length}`;
+            
+            // Показать сообщение в зависимости от результата
+            if (score <= 10) {
+                resultMessage.textContent = "Учи ГТО!";
+            } else if (score <= 20) {
+                resultMessage.textContent = "Неплохо, но можно лучше!";
+            } else {
+                resultMessage.textContent = "Отлично! Вы знаток ГТО!";
+                createConfetti();
+            }
+            
+            // Обновить прогресс-бар до 100%
+            progressBar.style.width = '100%';
+        }
+
+        function showReview() {
+            resultScreen.style.display = 'none';
+            reviewScreen.style.display = 'block';
+            
+            reviewQuestionsContainer.innerHTML = '';
+            
+            questions.forEach((question, index) => {
+                const questionElement = document.createElement('div');
+                questionElement.classList.add('review-question');
+                
+                const questionTitle = document.createElement('h3');
+                questionTitle.textContent = `Вопрос ${index + 1}: ${question.question}`;
+                questionElement.appendChild(questionTitle);
+                
+                const optionsContainer = document.createElement('div');
+                optionsContainer.classList.add('review-options');
+                
+                question.options.forEach((option, optionIndex) => {
+                    const optionElement = document.createElement('div');
+                    optionElement.classList.add('review-option');
+                    optionElement.textContent = option;
+                    
+                    if (userAnswers[index] === optionIndex && optionIndex === question.correct) {
+                        optionElement.classList.add('correct-answer');
+                        optionElement.innerHTML += ' <i class="fas fa-check"></i> (Ваш ответ - правильный)';
+                    } else if (userAnswers[index] === optionIndex) {
+                        optionElement.classList.add('user-answer');
+                        optionElement.innerHTML += ' <i class="fas fa-times"></i> (Ваш ответ)';
+                    } else if (optionIndex === question.correct) {
+                        optionElement.classList.add('correct-answer');
+                        optionElement.innerHTML += ' <i class="fas fa-check"></i> (Правильный ответ)';
+                    }
+                    
+                    optionsContainer.appendChild(optionElement);
+                });
+                
+                const explanationElement = document.createElement('div');
+                explanationElement.classList.add('explanation');
+                explanationElement.innerHTML = `<p><strong>Объяснение:</strong> ${question.explanation}</p>`;
+                
+                questionElement.appendChild(optionsContainer);
+                questionElement.appendChild(explanationElement);
+                reviewQuestionsContainer.appendChild(questionElement);
+            });
+        }
+
+        function createConfetti() {
+            const colors = ['#3498db', '#9b59b6', '#2ecc71', '#e74c3c', '#f1c40f'];
+            for (let i = 0; i < 100; i++) {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                document.body.appendChild(confetti);
+                
+                // Удалить конфетти после анимации
+                setTimeout(() => {
+                    confetti.remove();
+                }, 5000);
+            }
+        }
+    </script>
+</body>
+  </html>
